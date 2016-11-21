@@ -28,10 +28,10 @@ import matplotlib.pyplot as plt
 start = time.time()
 AC=100
 # number of W
-WN=3
+WN=5
 
 #1+number of the function s dimention
-NN=3
+NN=5
 a = np.arange(0.1,(WN+1)*0.1,0.1)
 
 def y_from_x(_x,_W,_b):
@@ -83,7 +83,7 @@ for i in xrange(100):
     print i, sess.run(result)
 
 x_correct = np.arange(-100, 100, 1)
-y_correct =0.3*pow(x_correct, 3) + 0.2*pow(x_correct, 2) + 0.1*x_correct + 1
+y_correct =0.5*pow(x_correct, 4) + 0.4*pow(x_correct, 3) + 0.3*pow(x_correct, 2) + 0.2*x_correct + 0.1
 
 plt.plot(x_correct, y_correct)
 plt.scatter(plot_x, plot_y)

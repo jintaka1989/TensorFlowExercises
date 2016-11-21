@@ -8,20 +8,26 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 
+def y_from_x(_x,_W,_b):
+    _y = np.dot(_W,_x) + _b
+    return _y
+
 start = time.time()
 
 # data set
-x_sample = (np.random.rand(100,1)*10 - 5).astype("float32")
-y_sample  = 0.3*pow(x_sample, 3) + 0.2*pow(x_sample, 2) + 0.1*x_sample + 1
+x_sample = (np.random.rand(100,1)*2).astype("float32")
+y_sample  = 0.3*x_sample*x_sample*x_sample + 0.2*x_sample*x_sample + 0.1*x_sample + 1
 # y_sample = y_sample
+
+print(y_sample)
 
 # import pdb; pdb.set_trace()
 
 x_data = tf.placeholder(tf.float32,[1])
 y_data = tf.placeholder(tf.float32,[1])
 
-# w_input = tf.Variable(tf.random_uniform([1,3], -1.0, 1.0))
-w_input = tf.Variable(tf.ones([1,3]))
+w_input = tf.Variable(tf.random_uniform([1,3], -1.0, 1.0))
+# w_input = tf.Variable(tf.ones([1,3]))
 b_input = tf.Variable(tf.ones([1]))
 
 pow_x_n_list = []
@@ -32,12 +38,14 @@ for i in xrange(3):
 
 h_linear1 = tf.matmul(w_input , pow_x_n_list, transpose_a=False) + b_input
 
+# h_linear1 = w_input[0:3]*x_data*x_data*x_data + w_input[0:2]*x_data*x_data + w_input[0:1]*x_data + w_input[0:0]*x_data + b_input
+
 y = h_linear1
 
 loss = tf.reduce_mean(tf.square(y_data - y))
 # loss = -tf.reduce_sum(y_data*tf.log(y))
 
-optimizer = tf.train.GradientDescentOptimizer(0.01)
+optimizer = tf.train.GradientDescentOptimizer(0.02)
 train = optimizer.minimize(loss)
 
 init = tf.initialize_all_variables()
@@ -52,7 +60,7 @@ sess = tf.Session()
 # writer = tf.train.SummaryWriter("/tmp/tensorflow_log", sess.graph_def)
 sess.run(init)
 
-for step in xrange(1001):
+for step in xrange(3001):
     for i in xrange(100):
         if step % 100 == 0:
             # result = sess.run([merged, loss],feed_dict={x_data:x_sample[i], y_data:y_sample[i]})
@@ -69,16 +77,16 @@ for step in xrange(1001):
 
 x_correct = np.arange(-10, 10, 1)
 
-y_correct = 0.3*pow(x_correct, 3) + 0.2*pow(x_correct, 2) + 0.1
+y_correct = 0.3*pow(x_correct, 3) + 0.2*pow(x_correct, 2) + 0.1*pow(x_correct, 1) + 1
 
 plt.plot(x_correct, y_correct)
 
 x=[]
 re = []
 
-for i in xrange(20):
-    plot_x = i-10
-    x.append(plot_x)
+for i in xrange(10):
+    plot_x = i
+    x.append([plot_x])
     re.append(sess.run(y, feed_dict={x_data:[plot_x]}))
     print i
     print(re[i])
