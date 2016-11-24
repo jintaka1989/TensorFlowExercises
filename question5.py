@@ -24,6 +24,7 @@ a = np.arange(0.1,(WN+1)*0.1,0.1)
 x_data = np.random.rand(AC,NN,1).astype("float32")
 y_data = np.zeros((AC,NN,1)).astype("float32")
 npow = 1
+# import pdb; pdb.set_trace()
 
 for i in xrange(NN):
     y_data += a[i] * npow
