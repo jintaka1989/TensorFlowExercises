@@ -23,11 +23,12 @@ y_data = tf.placeholder(tf.float32,[1])
 w_input = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
 b_input = tf.Variable(tf.zeros([1]))
 
+# 素子の数（テンソルの数）を決める
+tensor_number = [4,4]
+w = tf.Variable(tf.random_uniform(tensor_number, -1.0, 1.0))
+b = tf.Variable(tf.zeros(tensor_number))
 
-w = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
-b = tf.Variable(tf.zeros([4,4]))
-
-w_output = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
+w_output = tf.Variable(tf.random_uniform(tensor_number, -1.0, 1.0))
 b_output = tf.Variable(tf.zeros([1]))
 
 # input layer
@@ -36,9 +37,9 @@ h_linear1 = tf.add(w_input*x_data, b_input)
 # first hidden layer
 h_linear2 = tf.add(h_linear1*w, b)
 # h_linear2 = h_linear1*w + b
-
-# output layer
-h_linear3 = tf.reduce_sum(tf.matmul(h_linear2,w_output)) + b_output
+# # output layer
+# h_linear3 = tf.reduce_sum(tf.matmul(h_linear2,w_output, transpose_a = True)) + b_output
+h_linear3 = tf.reduce_sum(tf.batch_matmul(h_linear2,w_output, adj_x=True, adj_y=True)) + b_output
 
 y = h_linear3
 
@@ -57,7 +58,7 @@ merged = tf.merge_all_summaries()
 writer = tf.train.SummaryWriter("/tmp/tensorflow_log", sess.graph_def)
 sess.run(init)
 
-for step in xrange(2001):
+for step in xrange(1001):
     for i in xrange(100):
         if step % 100 == 0:
             result = sess.run([merged, loss],feed_dict={x_data:x_sample[i], y_data:y_sample[i]})
