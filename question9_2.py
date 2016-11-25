@@ -1,5 +1,7 @@
-# import pdb; pdb.set_trace()
 # -*- coding: utf-8 -*-
+# sinをn次関数で近似する
+# 9次関数を選択した
+# データセットが-1から1のため,範囲外で誤差が生じる
 
 import tensorflow as tf
 import numpy as np
@@ -12,7 +14,7 @@ start = time.time()
 # number of datum pare in dataset
 AC=100
 # number of the function s dimention
-NFD = 6
+NFD = 9
 #1+number of the function s dimention
 Nadd1=NFD+1
 # number of W
@@ -56,7 +58,7 @@ b = tf.Variable(tf.zeros(tensor_number))
 w_output = tf.Variable(tf.random_uniform(tensor_number, -1.0, 1.0))
 b_output = tf.Variable(tf.zeros([1]))
 
-# 内積, 一般式slope[n]*x^nの合計(n=1から)
+# 内積, 一般式はslope[n]*x^n
 def matmul_extend(w_input, x):
     x_power = []
     for i in xrange(NFD):
