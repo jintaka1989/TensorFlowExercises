@@ -38,8 +38,8 @@ h_linear1 = tf.add(w_input*x_data, b_input)
 h_linear2 = tf.add(h_linear1*w, b)
 # h_linear2 = h_linear1*w + b
 # # output layer
-# h_linear3 = tf.reduce_sum(tf.matmul(h_linear2,w_output, transpose_a = True)) + b_output
-h_linear3 = tf.reduce_sum(tf.batch_matmul(h_linear2,w_output, adj_x=True, adj_y=True)) + b_output
+h_linear3 = tf.reduce_sum(tf.matmul(h_linear2,w_output, transpose_a = True)) + b_output
+# h_linear3 = tf.reduce_sum(tf.batch_matmul(h_linear2,w_output, adj_x=True, adj_y=True)) + b_output
 
 y = h_linear3
 
