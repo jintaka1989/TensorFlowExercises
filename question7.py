@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 # 未完成
-# 2次関数の近似を行いたい
-# y_sample = 0.1*x_sample*x_sample + 0.3
-# 演習のためテンソルを増やしてみる
-# 入力層１個、隠れ層2*2*2*2個、出力層１個のモデルを作成せよ
-# それぞれ重みWとバイアスbを使うこと
+# ニューラルネットワークが任意の関数を表現できることの視覚的証明
+# http://nnadl-ja.github.io/nnadl_site_ja/chap4.html
+# 上記を実装したい
 
 import tensorflow as tf
 import numpy as np
