@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-# 未完成
 # n次関数の近似を行いたい
 # 演習のためテンソルを増やしてみる
 # なるべく一般化する
 # なるべくtesnsorflowの関数やnumpyの行列計算を使ってすっきり書く
-# TODO:次数用の入力を用意し、それによってテンソル数が変化するものを作る
+# TODO:次数用の入力を用意し、それによってテンソルの素子数が変化するものを作る
 # 重みWとバイアスbを使う
 
 import tensorflow as tf
@@ -17,7 +16,7 @@ start = time.time()
 # number of datum pare in dataset
 AC=100
 # number of the function s dimention
-NFD = 4
+NFD = 7
 #1+number of the function s dimention
 Nadd1=NFD+1
 # number of W
@@ -66,11 +65,11 @@ def matmul_extend(w_input, x):
     x_power = []
     for i in xrange(NFD):
         x_power.append(pow(x,(i+1)))
-    y_sample = tf.matmul(w_input,x_power,transpose_a=True) + intercept
+    y_sample = tf.matmul(w_input,x_power,transpose_a=True)
     return y_sample
 
 # input layer
-h_linear1 = tf.add(matmul_extend(w_input, x_data), b_output)
+h_linear1 = tf.add(matmul_extend(w_input, x_data), b_input)
 
 # first hidden layer
 h_linear2 = tf.add(h_linear1*w, b)
