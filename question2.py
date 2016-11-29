@@ -4,7 +4,7 @@
 # 演習のためテンソルを増やしてみる
 # 入力層１個、隠れ層4*4個、出力層１個のモデルを作成せよ
 # それぞれ重みWとバイアスbを使うこと
-
+#
 import tensorflow as tf
 import numpy as np
 import time
