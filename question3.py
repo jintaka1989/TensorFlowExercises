@@ -38,7 +38,7 @@ h_linear1 = tf.add(w_input*x_data*x_data, b_input)
 # first hidden layer
 h_linear2 = tf.add(h_linear1*w, b)
 
-# first hidden layer
+# second hidden layer
 h_linear3 = tf.matmul(h_linear2, w2) + b2
 
 # output layer
