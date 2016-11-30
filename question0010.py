@@ -3,6 +3,9 @@
 # 9次関数を選択した
 # シグモイド関数を使うとどうなるか見てみる
 # データセットが-1から1のため,範囲外で誤差が生じる
+#
+#
+#
 
 import tensorflow as tf
 import numpy as np
