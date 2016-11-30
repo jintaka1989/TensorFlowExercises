@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 # sinをn次関数で近似する
 # 9次関数を選択した
-<<<<<<< HEAD
-# データセットが0から1のため,-1~0で誤差が生じる
-=======
-# データセットが0から1のため,それ以外の範囲で誤差が生じる
->>>>>>> 6108028ebdfca9557c4f793d4f4e20d0f26e4e94
-# データセットを-1まで増やしたものはquestion9_2.py
+# シグモイド関数を使うとどうなるか見てみる
+# データセットが-1から1のため,範囲外で誤差が生じる
 
 import tensorflow as tf
 import numpy as np
@@ -31,16 +27,18 @@ for i in xrange(NFD):
     slope.append((i+1)*0.1)
 intercept = 1.0
 
+dataset_range = 2.0
+
 # data set
 def create_dataset():
     x_result = []
     y_result = []
     for n in xrange(AC):
-        x_sample = np.random.rand(1).astype("float32")
+        x_sample = (np.random.rand(1).astype("float32")*dataset_range) - (dataset_range/2.0)
         x_power = []
         for i in xrange(NFD):
             x_power.append(pow(x_sample,(i+1)))
-        y_sample = math.sin(x_sample*2)*0.5
+        y_sample = math.sin(x_sample*2)*0.5 + 0.2
         y_sample = y_sample + 0.01*np.random.rand(1).astype("float32")
         x_result.append(x_sample)
         y_result.append(y_sample)
@@ -72,10 +70,10 @@ def matmul_extend(w_input, x):
     return y_sample
 
 # input layer
-h_linear1 = tf.add(matmul_extend(w_input, x_data), b_input)
+h_linear1 = tf.sigmoid(tf.add(matmul_extend(w_input, x_data), b_input))
 
 # first hidden layer
-h_linear2 = tf.add(h_linear1*w, b)
+h_linear2 = tf.sigmoid(tf.add(h_linear1*w, b))
 # h_linear2 = h_linear1*w + b
 
 # # output layer
@@ -114,19 +112,20 @@ for step in xrange(2001):
         print sess.run(b_input)
 
 
+graph_range=100
 # data set
 def create_plotset():
     x_result = []
     y_result = []
-    for n in xrange(20):
-        x_sample = (n-10)*0.1
+    for n in xrange(graph_range):
+        x_sample = (n-graph_range/2.0)*0.1
         # slope = []
         x_power = []
         for i in xrange(NFD):
             # slope.append((i+1)*0.1)
             x_power.append(pow(x_sample,(i+1)))
         # intercept = 1.0
-        y_sample = math.sin(x_sample*2)*0.5
+        y_sample = math.sin(x_sample*2)*0.5 + 0.2
         x_result.append(x_sample)
         y_result.append(y_sample)
     return x_result, y_result
@@ -137,9 +136,8 @@ plt.plot(xx,yy)
 
 x=[]
 result = []
-
-for i in xrange(20):
-    prot_x = (i-10)*0.1
+for i in xrange(graph_range):
+    prot_x = (i-graph_range/2.0)*0.1
     x.append(prot_x)
     result.append(sess.run(y, feed_dict={x_data:[prot_x]}))
     print result[i]

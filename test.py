@@ -1,5 +1,8 @@
-# import pdb; pdb.set_trace()
 # -*- coding: utf-8 -*-
+# sinをn次関数で近似する
+# 9次関数を選択した
+# シグモイド関数を使うとどうなるか見てみる
+# データセットが-1から1のため,範囲外で誤差が生じる
 
 import tensorflow as tf
 import numpy as np
@@ -12,7 +15,7 @@ start = time.time()
 # number of datum pare in dataset
 AC=100
 # number of the function s dimention
-NFD = 6
+NFD = 9
 #1+number of the function s dimention
 Nadd1=NFD+1
 # number of W
@@ -24,12 +27,14 @@ for i in xrange(NFD):
     slope.append((i+1)*0.1)
 intercept = 1.0
 
+dataset_range = 8
+
 # data set
 def create_dataset():
     x_result = []
     y_result = []
     for n in xrange(AC):
-        x_sample = np.random.rand(1).astype("float32")*2.0-1.0
+        x_sample = (np.random.rand(1).astype("float32")*dataset_range) - (dataset_range/2.0)
         x_power = []
         for i in xrange(NFD):
             x_power.append(pow(x_sample,(i+1)))
@@ -56,7 +61,7 @@ b = tf.Variable(tf.zeros(tensor_number))
 w_output = tf.Variable(tf.random_uniform(tensor_number, -1.0, 1.0))
 b_output = tf.Variable(tf.zeros([1]))
 
-# 内積, 一般式slope[n]*x^nの合計(n=1から)
+# 内積, 一般式はslope[n]*x^n
 def matmul_extend(w_input, x):
     x_power = []
     for i in xrange(NFD):
@@ -65,10 +70,10 @@ def matmul_extend(w_input, x):
     return y_sample
 
 # input layer
-h_linear1 = tf.add(matmul_extend(w_input, x_data), b_input)
+h_linear1 = tf.sigmoid(tf.add(matmul_extend(w_input, x_data), b_input))
 
 # first hidden layer
-h_linear2 = tf.add(h_linear1*w, b)
+h_linear2 = tf.sigmoid(tf.add(h_linear1*w, b))
 # h_linear2 = h_linear1*w + b
 
 # # output layer
@@ -92,7 +97,7 @@ merged = tf.merge_all_summaries()
 writer = tf.train.SummaryWriter("/tmp/tensorflow_log", sess.graph_def)
 sess.run(init)
 
-for step in xrange(2001):
+for step in xrange(3001):
     for i in xrange(100):
         if step % 100 == 0:
             result = sess.run([merged, loss],feed_dict={x_data:x_sample[i], y_data:y_sample[i]})
@@ -107,7 +112,7 @@ for step in xrange(2001):
         print sess.run(b_input)
 
 
-graph_range=30
+graph_range=100
 # data set
 def create_plotset():
     x_result = []
