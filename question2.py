@@ -1,18 +1,11 @@
 # -*- coding: utf-8 -*-
 # 一次関数の近似を行いたい
-<<<<<<< HEAD
-# y_sample = 0.1*x_sample*x_sample + 0.3
-# 演習のためテンソルを増やしてみる
-# 入力層１個、隠れ層4*4個、出力層１個のモデルを作成せよ
-# それぞれ重みWとバイアスbを使うこと
 
-=======
 # y_sample = 0.1*x_sample + 0.3
 # 演習のためテンソルを増やしてみる
 # 入力層１個、隠れ層4*4個、出力層１個のモデルを作成せよ
 # それぞれ重みWとバイアスbを使うこと
-#
->>>>>>> 6108028ebdfca9557c4f793d4f4e20d0f26e4e94
+
 import tensorflow as tf
 import numpy as np
 import time
