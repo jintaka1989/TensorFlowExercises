@@ -4,6 +4,9 @@
 # 演習のためテンソルを増やしてみる
 # 入力層１個、隠れ層(4*4)*2個,出力層１個のモデルを作成せよ
 # それぞれ重みWとバイアスbを使うこと
+# あくまで「二次関数を近似する」として二次関数専用のモデルを作成している
+# やっていることはquestion2.pyと変わらないことに注意する
+# h_linear1 = tf.add(w_input*x_data*x_data, b_input)
 
 import tensorflow as tf
 import numpy as np
