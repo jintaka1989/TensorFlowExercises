@@ -1,2 +1,19 @@
-# git ignores these
-*.DS_Store
+.DS_Store
+
+# 特定の拡張子を無視する場合はどこにも/を付けない
+*.o
+*.pyc
+*.ckpt
+
+# 特定のファイルを無視する場合は先頭に/を付ける
+/.python-version
+/main.py
+
+# 特定のディレクトリを無視する場合は先頭と末尾に/を付ける
+/hogehoge/
+/build/
+/dist/
+/human_recognizer.egg-info/
+/tmp/data_get/test/
+/tmp/data_get/train/
+/tests/output/
