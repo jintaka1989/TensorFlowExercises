@@ -1,151 +1,96 @@
 # -*- coding: utf-8 -*-
-# sinをn次関数で近似する
-# 9次関数を選択した
-# シグモイド関数を使うとどうなるか見てみる
-# データセットが-1から1のため,範囲外で誤差が生じる
+# 一次関数の近似を行いたい
+# y_data = 0.1 * x_data + 0.3
+# 演習のためテンソルを増やしてみる
+# 入力層１個、隠れ層２個、出力層１個のモデルを作成せよ
+# それぞれ重みWとバイアスbを使うこと
 
 import tensorflow as tf
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-import math
 
 start = time.time()
 
-# number of datum pare in dataset
-AC=100
-# number of the function s dimention
-NFD = 9
-#1+number of the function s dimention
-Nadd1=NFD+1
-# number of W
-WN=Nadd1
-
-# 傾きslopeと切片interceptをここに書いて統一
-slope = []
-for i in xrange(NFD):
-    slope.append((i+1)*0.1)
-intercept = 1.0
-
-dataset_range = 8
-
 # data set
-def create_dataset():
-    x_result = []
-    y_result = []
-    for n in xrange(AC):
-        x_sample = (np.random.rand(1).astype("float32")*dataset_range) - (dataset_range/2.0)
-        x_power = []
-        for i in xrange(NFD):
-            x_power.append(pow(x_sample,(i+1)))
-        y_sample = math.sin(x_sample*2)*0.5 + 0.2
-        y_sample = y_sample + 0.01*np.random.rand(1).astype("float32")
-        x_result.append(x_sample)
-        y_result.append(y_sample)
-    return x_result, y_result
+x_data = np.random.rand(100).astype("float32")
+y_data = 0.1 * x_data + 0.3
+y_data = y_data + 0.01*np.random.rand(100).astype("float32")
 
-x_sample, y_sample = create_dataset()
+# w_input = tf.Variable(tf.random_uniform([1], -1.0, 1.0), name="w_input")
+# b_input = tf.Variable(tf.zeros([1]), name="b_input")
 
-x_data = tf.placeholder(tf.float32,[1])
-y_data = tf.placeholder(tf.float32,[1])
+W = tf.Variable(tf.random_uniform([1], -1.0, 1.0), name="W_hidden")
+b = tf.Variable(tf.zeros([1]), name="b_hidden")
 
-w_input = tf.Variable(tf.random_uniform([NFD,1], -1.0, 1.0))
-b_input = tf.Variable(tf.zeros([1]))
+# w_output = tf.Variable(tf.random_uniform([2], -1.0, 1.0), name="w_output")
+# b_output = tf.Variable(tf.zeros([1]), name="b_output")
 
-# 素子の数（テンソルの中身の数）を決める
-tensor_number = (1,1,1)
+# y_ = w_input * x_data + b_input
+y_ = W * x_data + b
 
-w = tf.Variable(tf.random_uniform(tensor_number, -1.0, 1.0))
-b = tf.Variable(tf.zeros(tensor_number))
+# y_1 = W[0]*y_ + b[0]
+# y_2 = W[1]*y_ + b[1]
 
-w_output = tf.Variable(tf.random_uniform(tensor_number, -1.0, 1.0))
-b_output = tf.Variable(tf.zeros([1]))
+y = y_
 
-# 内積, 一般式はslope[n]*x^n
-def matmul_extend(w_input, x):
-    x_power = []
-    for i in xrange(NFD):
-        x_power.append(pow(x,(i+1)))
-    y_sample = tf.matmul(w_input,x_power,transpose_a=True)
-    return y_sample
-
-# input layer
-h_linear1 = tf.sigmoid(tf.add(matmul_extend(w_input, x_data), b_input))
-
-# first hidden layer
-h_linear2 = tf.sigmoid(tf.add(h_linear1*w, b))
-# h_linear2 = h_linear1*w + b
-
-# # output layer
-# h_linear3 = tf.reduce_sum(tf.matmul(h_linear2,w_output, transpose_a = True)) + b_output
-h_linear3 = tf.reduce_sum(tf.batch_matmul(h_linear2,w_output, adj_x=True, adj_y=True)) + b_output
-
-y = h_linear3
+# Add summary ops to collect data
+w_hist = tf.histogram_summary("weights", W)
+b_hist = tf.histogram_summary("biases", b)
+y_hist = tf.histogram_summary("y", y)
 
 loss = tf.reduce_mean(tf.square(y_data - y))
 
 # Outputs a Summary protocol buffer with scalar values
 loss_summary = tf.scalar_summary("loss", loss)
 
-optimizer = tf.train.GradientDescentOptimizer(0.1)
+optimizer = tf.train.GradientDescentOptimizer(0.5)
 train = optimizer.minimize(loss)
+
+# クロスエントロピーはクラス分類に向いている
+# cross_entropy = -tf.reduce_sum(y_data*tf.log(y))
+# train = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
+
 
 init = tf.initialize_all_variables()
 
 sess = tf.Session()
+
 merged = tf.merge_all_summaries()
 writer = tf.train.SummaryWriter("/tmp/tensorflow_log", sess.graph_def)
+
 sess.run(init)
 
-for step in xrange(3001):
-    for i in xrange(100):
-        if step % 100 == 0:
-            result = sess.run([merged, loss],feed_dict={x_data:x_sample[i], y_data:y_sample[i]})
-            summary_str = result[0]
-            acc = result[1]
-            writer.add_summary(summary_str, step)
-        else:
-            sess.run(train, feed_dict={x_data:x_sample[i], y_data:y_sample[i]})
-    if step % 100 == 0:
-        print step
-        print sess.run(w_input)
-        print sess.run(b_input)
+w=[]
+bias=[]
 
+for step in xrange(1001):
+    sess.run(train)
+    if step % 10 == 0:
+        result = sess.run([merged, loss])
+        summary_str = result[0]
+        acc = result[1]
+        writer.add_summary(summary_str, step)
+        print step, sess.run(W), sess.run(b)
 
-graph_range=100
-# data set
-def create_plotset():
-    x_result = []
-    y_result = []
-    for n in xrange(graph_range):
-        x_sample = (n-graph_range/2.0)*0.1
-        # slope = []
-        x_power = []
-        for i in xrange(NFD):
-            # slope.append((i+1)*0.1)
-            x_power.append(pow(x_sample,(i+1)))
-        # intercept = 1.0
-        y_sample = math.sin(x_sample*2)*0.5 + 0.2
-        x_result.append(x_sample)
-        y_result.append(y_sample)
-    return x_result, y_result
-
-xx, yy = create_plotset()
-
-plt.plot(xx,yy)
-
-x=[]
-result = []
-for i in xrange(graph_range):
-    prot_x = (i-graph_range/2.0)*0.1
-    x.append(prot_x)
-    result.append(sess.run(y, feed_dict={x_data:[prot_x]}))
-    print result[i]
-
-plt.scatter(x, result)
-plt.axhline(0, color='black')
-plt.axvline(0, color='black')
-plt.show()
+# W = sess.run(W)
+# b = sess.run(b)
+#
+# xx = np.arange(-10, 10, 1)
+# yy = 0.1 * xx + 0.3
+#
+# plt.plot(xx, yy)
+#
+# x = np.arange(-10, 10, 1)
+#
+# y_ = W[0] * x + b[0]
+# y_1 = W[1]*y_ + b[1]
+# y_2 = W[2]*y_ + b[2]
+# y = W[3]*y_1 + W[4]*y_2 + b[3]
+#
+# plt.scatter(x, y)
+#
+# plt.show()
 
 sess.close()
 

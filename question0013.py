@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# import pdb; pdb.set_trace()
 # 二次関数の近似を行いたい
 # y_sample = 2*x_sample*x_sample + 0.5
 # ニューラルネットワークの本領発揮
@@ -17,7 +18,7 @@ start = time.time()
 
 # data set
 x_sample = np.random.rand(100,1).astype("float32")
-x_sample = x_sample
+x_sample = x_sample*2.0 - 1.0
 y_sample = coefficient*x_sample*x_sample + intercept
 
 x_data = tf.placeholder(tf.float32,[1])
@@ -29,14 +30,20 @@ b_input = tf.Variable(tf.zeros([1]))
 w = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
 b = tf.Variable(tf.zeros([4,4]))
 
+w_output = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
+b_output = tf.Variable(tf.zeros([1]))
+
 # 1st layer
 h_linear1 = tf.sigmoid(tf.add(w_input*x_data, b_input))
 
 # 2nd layer
-h_linear2 = tf.reduce_sum(tf.matmul(h_linear1*w, b))
+h_linear2 = tf.matmul(h_linear1*w, b)
+
+# 3rd layer
+h_linear3 = tf.reduce_sum(tf.matmul(h_linear2, w_output))
 
 # output
-y = h_linear2
+y = tf.add(h_linear3, b_output)
 
 # Add summary ops to collect data
 w_hist = tf.histogram_summary("weights", w)
@@ -69,6 +76,7 @@ for step in xrange(1001):
         print step
         print sess.run(w)
         print sess.run(b)
+        print acc
 
 xx = np.arange(-1, 1, 0.1)
 yy = coefficient * xx * xx + intercept

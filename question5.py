@@ -21,14 +21,14 @@ NN=NFD+1
 # number of W
 WN=NN
 
-a = np.arange(0.1,(WN+1)*0.1,0.1)
+a = np.arange(1,WN+1,1)
+a = 0.1 * a
 
-x_data = np.random.rand(AC,NN,1).astype("float32")
-y_data = np.zeros((AC,NN,1)).astype("float32")
+x_data = np.random.rand(AC,1,1).astype("float32")
+y_data = np.zeros((AC,1,1)).astype("float32")
 npow = 1
-# import pdb; pdb.set_trace()
 
-for i in xrange(NN):
+for i in xrange(WN):
     y_data += a[i] * npow
     npow *= x_data
 
@@ -83,8 +83,8 @@ for i in xrange(100):
     y_correct.append(result)
     # print i, result
 
-plt.plot(x_correct, y_correct)
 plt.scatter(plot_x, plot_y)
+plt.plot(x_correct, y_correct)
 
 plt.show()
 

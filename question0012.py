@@ -17,7 +17,7 @@ start = time.time()
 
 # data set
 x_sample = np.random.rand(100,1).astype("float32")
-x_sample = x_sample
+x_sample = x_sample*2.0 - 1.0
 y_sample = coefficient*x_sample*x_sample + intercept
 
 x_data = tf.placeholder(tf.float32,[1])
@@ -29,14 +29,29 @@ b_input = tf.Variable(tf.zeros([1]))
 w = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
 b = tf.Variable(tf.zeros([4,4]))
 
+w_input2 = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
+b_input2 = tf.Variable(tf.zeros([1]))
+w2 = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
+b2 = tf.Variable(tf.zeros([4,4]))
+
+w_output = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
+b_output = tf.Variable(tf.zeros([1]))
+b_output2 = tf.Variable(tf.zeros([1]))
+
 # 1st layer
 h_linear1 = tf.sigmoid(tf.add(w_input*x_data, b_input))
 
 # 2nd layer
 h_linear2 = tf.reduce_sum(tf.matmul(h_linear1*w, b))
 
+# 1st layer
+h_linear3 = tf.sigmoid(tf.add(w_input2*x_data, b_input2))
+
+# 2nd layer
+h_linear4 = tf.reduce_sum(tf.matmul(h_linear3*w2, b2))
+
 # output
-y = h_linear2
+y = tf.add(tf.add(h_linear2, b_output),tf.add(h_linear4, b_output2))
 
 # Add summary ops to collect data
 w_hist = tf.histogram_summary("weights", w)
@@ -69,6 +84,7 @@ for step in xrange(1001):
         print step
         print sess.run(w)
         print sess.run(b)
+        print acc
 
 xx = np.arange(-1, 1, 0.1)
 yy = coefficient * xx * xx + intercept
