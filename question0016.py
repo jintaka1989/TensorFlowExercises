@@ -74,7 +74,7 @@ sess = tf.Session()
 # writer = tf.train.SummaryWriter("/tmp/tensorflow_log", sess.graph_def)
 sess.run(init)
 
-for step in xrange(501):
+for step in xrange(1001):
     for i in xrange(data_num):
         if step % 100 == 0:
             sess.run(loss, feed_dict={x_data:x_sample[i], y_data:y_sample[i]})
