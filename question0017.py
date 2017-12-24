@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 # 作成中
+# -1から1の範囲で「n次関数近似の視覚的証明」を実装
+# tensor_numは分解能となる
 
 import tensorflow as tf
 import numpy as np
@@ -15,7 +17,7 @@ start = time.time()
 
 # data set
 data_num = 200
-tenosor_num = 100
+tenosor_num = 1000
 
 x_sample = np.random.rand(data_num,1).astype("float32")
 x_sample = x_sample*2.0 - 1.0
@@ -28,8 +30,8 @@ w_input = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
 b_input = tf.Variable(tf.zeros([1]))
 
 # w = tf.Variable(tf.random_uniform([tenosor_num,1], -1.0, 1.0))
-w = tf.Variable(tf.constant(tenosor_num,shape=[tenosor_num,1],dtype=tf.float32))
-b = tf.Variable(tf.constant(2.0*(np.arange(tenosor_num).astype(float)-(tenosor_num/2.0)),shape=[tenosor_num,1],dtype=tf.float32))
+w = tf.constant(tenosor_num,shape=[tenosor_num,1],dtype=tf.float32)
+b = tf.constant(2.0*(np.arange(tenosor_num).astype(float)-(tenosor_num/2.0)),shape=[tenosor_num,1],dtype=tf.float32)
 
 # w_input2 = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
 # b_input2 = tf.Variable(tf.zeros([1]))
