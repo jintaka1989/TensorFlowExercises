@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-# 二次関数の近似を行いたい
-# y_sample = 2*x_sample*x_sample + 0.5
-# ニューラルネットワークの本領発揮
-# シグモイド関数を使い「ニューラルネットワークを適当に設計」して二次関数を近似する
-# データセットの範囲外については近似できない
-# とりあえず上記の二次関数を近似できたというだけなので、他の範囲や関数に適用できない
+# 作成中
 
 import tensorflow as tf
 import numpy as np
@@ -19,41 +14,52 @@ start = time.time()
 # data set
 x_sample = np.random.rand(100,1).astype("float32")
 x_sample = x_sample*2.0 - 1.0
-y_sample = coefficient*x_sample*x_sample + intercept
+y_sample = x_sample*x_sample*x_sample + coefficient*x_sample*x_sample + intercept
 
 x_data = tf.placeholder(tf.float32,[1])
 y_data = tf.placeholder(tf.float32,[1])
 
 w_input = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
 b_input = tf.Variable(tf.zeros([1]))
-
-w = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
-b = tf.Variable(tf.zeros([4,4]))
-
 w_input2 = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
 b_input2 = tf.Variable(tf.zeros([1]))
 
-w2 = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
-b2 = tf.Variable(tf.zeros([4,4]))
+# 素子の数（テンソルの数）を決める
+tensor_number = (2,2,2,2)
+w = tf.Variable(tf.random_uniform(tensor_number, -1.0, 1.0))
+b = tf.Variable(tf.zeros(tensor_number))
+w2 = tf.Variable(tf.random_uniform(tensor_number, -1.0, 1.0))
+b2 = tf.Variable(tf.zeros(tensor_number))
 
-w_output = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
+w_output = tf.Variable(tf.random_uniform(tensor_number, -1.0, 1.0))
 b_output = tf.Variable(tf.zeros([1]))
+
+w_output2 = tf.Variable(tf.random_uniform(tensor_number, -1.0, 1.0))
 b_output2 = tf.Variable(tf.zeros([1]))
 
-# 1st layer
+# input layer
 h_linear1 = tf.sigmoid(tf.add(w_input*x_data, b_input))
 
-# 2nd layer
-h_linear2 = tf.reduce_sum(tf.matmul(h_linear1*w, b))
+# first hidden layer
+h_linear2 = tf.sigmoid((tf.add(h_linear1*w, b)))
+# h_linear2 = h_linear1*w + b
 
-# 1st layer
-h_linear3 = tf.sigmoid(tf.add(w_input2*x_data, b_input2))
+# # output layer
+# h_linear3 = tf.reduce_sum(tf.matmul(h_linear2,w_output, transpose_a = True)) + b_output
+h_linear3 = tf.reduce_sum(tf.batch_matmul(h_linear2,w_output, adj_x=True, adj_y=True))
 
-# 2nd layer
-h_linear4 = tf.reduce_sum(tf.matmul(h_linear3*w2, b2))
+# input layer
+h_linear4 = tf.sigmoid(tf.add(w_input2*x_data, b_input2))
 
-# output
-y = tf.add(tf.add(h_linear2, b_output),tf.add(h_linear4, b_output2))
+# first hidden layer
+h_linear5 = tf.sigmoid((tf.add(h_linear4*w2, b2)))
+# h_linear2 = h_linear1*w + b
+
+# # output layer
+# h_linear3 = tf.reduce_sum(tf.matmul(h_linear2,w_output, transpose_a = True)) + b_output
+h_linear6 = tf.reduce_sum(tf.batch_matmul(h_linear5,w_output2, adj_x=True, adj_y=True))
+
+y = tf.add(h_linear3*b_output, h_linear6*b_output2)
 
 # Add summary ops to collect data
 w_hist = tf.histogram_summary("weights", w)

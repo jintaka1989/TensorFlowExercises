@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 # import pdb; pdb.set_trace()
-# 二次関数の近似を行いたい
-# y_sample = 2*x_sample*x_sample + 0.5
-# ニューラルネットワークの本領発揮
-# シグモイド関数を使い「ニューラルネットワークを適当に設計」して二次関数を近似する
-# データセットの範囲外については近似できない
+# 層を深くする
 
 import tensorflow as tf
 import numpy as np
@@ -19,7 +15,7 @@ start = time.time()
 # data set
 x_sample = np.random.rand(100,1).astype("float32")
 x_sample = x_sample*2.0 - 1.0
-y_sample = coefficient*x_sample*x_sample + intercept
+y_sample = x_sample*x_sample*x_sample + coefficient*x_sample*x_sample + intercept
 
 x_data = tf.placeholder(tf.float32,[1])
 y_data = tf.placeholder(tf.float32,[1])
@@ -30,20 +26,29 @@ b_input = tf.Variable(tf.zeros([1]))
 w = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
 b = tf.Variable(tf.zeros([4,4]))
 
+w2 = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
+b2 = tf.Variable(tf.zeros([4,4]))
+
+w3 = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
+b3 = tf.Variable(tf.zeros([4,4]))
+
 w_output = tf.Variable(tf.random_uniform([4,4], -1.0, 1.0))
 b_output = tf.Variable(tf.zeros([1]))
 
 # 1st layer
 h_linear1 = tf.sigmoid(tf.add(w_input*x_data, b_input))
 
-# 2nd layer
-h_linear2 = tf.matmul(h_linear1*w, b)
+# next layer
+h_linear2 = tf.sigmoid(tf.matmul(h_linear1*w, b)) # output 4*4
 
-# 3rd layer
-h_linear3 = tf.reduce_sum(tf.matmul(h_linear2, w_output))
+# next layer
+h_linear3 = tf.add(tf.matmul(h_linear2, w2),b2) # output 4*4
+
+# next layer
+h_linear_last = tf.reduce_sum(tf.matmul(h_linear3, w_output))
 
 # output
-y = tf.add(h_linear3, b_output)
+y = tf.add(h_linear_last, b_output)
 
 # Add summary ops to collect data
 w_hist = tf.histogram_summary("weights", w)
@@ -63,7 +68,7 @@ merged = tf.merge_all_summaries()
 writer = tf.train.SummaryWriter("/tmp/tensorflow_log", sess.graph_def)
 sess.run(init)
 
-for step in xrange(1001):
+for step in xrange(10001):
     for i in xrange(100):
         if step % 100 == 0:
             result = sess.run([merged, loss],feed_dict={x_data:x_sample[i], y_data:y_sample[i]})
