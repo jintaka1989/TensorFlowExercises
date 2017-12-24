@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 intercept=-0.25
 coefficient1=0.5
 coefficient2=5
-coefficient3=5
+coefficient3=0
 
 start = time.time()
 

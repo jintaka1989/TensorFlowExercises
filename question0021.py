@@ -1,25 +1,33 @@
 # -*- coding: utf-8 -*-
 # 完成
+# ノイズを加える
 
 import tensorflow as tf
 import numpy as np
 import time
 import matplotlib.pyplot as plt
+# import math
 
 intercept=-0.25
 coefficient1=0.5
 coefficient2=5
 coefficient3=5
+coefficient4=0.2
 
 start = time.time()
 
 # data set
 data_num = 200
-tenosor_num = 10
+tenosor_num = 20
+
+# graph_para
+graph_range = (-2, 2)
+x_plot_sub = 0.1
+x_range = int((graph_range[1] - graph_range[0])/x_plot_sub)
 
 x_sample = np.random.rand(data_num,1).astype("float32")
 x_sample = x_sample*2.0 - 1.0
-y_sample = coefficient3*x_sample*x_sample*x_sample + coefficient2*x_sample*x_sample + coefficient1*x_sample + intercept
+y_sample = np.sin(5*x_sample) + intercept + np.random.rand(data_num,1).astype("float32")/2
 
 x_data = tf.placeholder(tf.float32,[1])
 y_data = tf.placeholder(tf.float32,[1])
@@ -70,7 +78,7 @@ sess = tf.Session()
 # writer = tf.train.SummaryWriter("/tmp/tensorflow_log", sess.graph_def)
 sess.run(init)
 
-for step in xrange(2001):
+for step in xrange(501):
     for i in xrange(data_num):
         if step % 100 == 0:
             sess.run(loss, feed_dict={x_data:x_sample[i], y_data:y_sample[i]})
@@ -90,8 +98,8 @@ for step in xrange(2001):
         x=[]
         r = []
 
-        for i in xrange(20):
-            prot_x = (i-10)*0.1
+        for i in xrange(x_range):
+            prot_x = (i-x_range/2.0)*x_plot_sub
             x.append(prot_x)
             r.append(sess.run(y, feed_dict={x_data:[prot_x]}))
             print(r[i])
@@ -105,8 +113,8 @@ plt.scatter(x_sample, y_sample)
 x=[]
 r = []
 
-for i in xrange(20):
-    prot_x = (i-10)*0.1
+for i in xrange(x_range):
+    prot_x = (i-x_range/2.0)*0.1
     x.append(prot_x)
     r.append(sess.run(y, feed_dict={x_data:[prot_x]}))
     print(r[i])

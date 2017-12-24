@@ -5,21 +5,23 @@ import tensorflow as tf
 import numpy as np
 import time
 import matplotlib.pyplot as plt
+# import math
 
 intercept=-0.25
 coefficient1=0.5
 coefficient2=5
 coefficient3=5
+coefficient4=0.2
 
 start = time.time()
 
 # data set
 data_num = 200
-tenosor_num = 10
+tenosor_num = 20
 
 x_sample = np.random.rand(data_num,1).astype("float32")
 x_sample = x_sample*2.0 - 1.0
-y_sample = coefficient3*x_sample*x_sample*x_sample + coefficient2*x_sample*x_sample + coefficient1*x_sample + intercept
+y_sample = np.sin(5*x_sample) + intercept + np.random.rand(data_num,1).astype("float32")/2
 
 x_data = tf.placeholder(tf.float32,[1])
 y_data = tf.placeholder(tf.float32,[1])
